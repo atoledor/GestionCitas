@@ -3,138 +3,355 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Citas - Barbería</title>
+  <title>Gestión de Citas - La Luna Roja Barbershop</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: UnifrakturMaguntia (Gótica) y Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,500;0,700;0,900&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .font-gotica {
+      font-family: 'UnifrakturMaguntia', cursive;
+    }
+    /* Estilos personalizados para los inputs en modo oscuro */
+    .custom-input {
+      background-color: #0c0c0c;
+      border: 1px solid #262626;
+      color: #f0f0f0;
+    }
+    .custom-input:focus {
+      outline: none;
+      border-color: #d3122a;
+      box-shadow: 0 0 5px rgba(211, 18, 42, 0.4);
+    }
+    .custom-input:disabled {
+      background-color: #1a1a1a;
+      color: #555555;
+      border-color: #222222;
+      cursor: not-allowed;
+    }
+    /* Estilo para las opciones deshabilitadas del select */
+    option:disabled {
+      color: #666666;
+      background-color: #1a1a1a;
+    }
+
+    /* Icono del calendario nativo en color blanco */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
+    /* Estilo de carga global cuando se envía el formulario */
+    body.is-submitting, 
+    body.is-submitting * {
+      cursor: wait !important;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 p-4 md:p-8">
-  <div class="max-w-4xl mx-auto space-y-6">
+<body class="bg-[#0c0c0c] text-[#f0f0f0] min-h-screen p-4 md:p-8">
+  <div class="max-w-4xl mx-auto space-y-8">
     
-    <!-- Encabezado -->
-    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Sistema de Citas</h1>
+    <!-- Encabezado / Logo Header -->
+    <header class="relative flex flex-col md:flex-row items-center justify-between border-b border-[#262626] pb-4 pt-2">
+      
+      <!-- LOGO EN LA PARTE SUPERIOR IZQUIERDA -->
+      <!--<div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start mb-4 md:mb-0">
+        <img src="logo.jpg" alt="La Luna Roja Barbershop Logo" class="h-16 w-16 md:h-20 md:w-20 object-contain rounded-md border border-[#262626]">
+        <div class="block md:hidden">
+          <h1 class="text-3xl font-gotica text-[#d3122a]">la luna roja.</h1>
+        </div>
+      </div>-->
+
+      <!-- TÍTULO PRINCIPAL -->
+      <div class="text-center md:absolute md:left-1/2 md:-translate-x-1/2">
+        <div class="text-[#e5b757] text-sm md:text-base tracking-widest">✦ 🌙 ✦</div>
+        <h1 class="hidden md:block text-4xl font-gotica text-[#d3122a] tracking-wide drop-shadow-[0_2px_8px_rgba(211,18,42,0.3)]">
+          la luna roja.
+        </h1>
+        <p class="text-xs md:text-sm font-black tracking-[0.3em] uppercase text-gray-300">
+          BARBERSHOP &bull; CITAS
+        </p>
+      </div>
+
+      <div class="hidden md:block w-20"></div>
+    </header>
 
     <!-- Formulario para Guardar Citas -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-semibold mb-4 text-gray-700">Registrar Nueva Cita</h2>
+    <div class="bg-[#151515] p-6 rounded-lg border border-[#262626] shadow-2xl">
+      <h2 class="text-xl font-bold mb-6 text-[#e5b757] flex items-center gap-2 border-b border-[#262626] pb-3">
+        <span>✦</span> Registrar Nueva Cita
+      </h2>
+      
       <form id="appointmentForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" id="cliente" placeholder="Nombre Cliente" required class="p-2 border rounded">
-        <input type="tel" id="telefono" placeholder="Teléfono / WhatsApp" class="p-2 border rounded">
-        <input type="date" id="fecha" required class="p-2 border rounded">
-        <div class="grid grid-cols-2 gap-2">
-          <input type="time" id="horaInicio" required class="p-2 border rounded">
-          <input type="time" id="horaFin" required class="p-2 border rounded">
-        </div>
-        <select id="servicio" class="p-2 border rounded" required>
+        <input type="text" id="cliente" placeholder="Nombre del Cliente" required class="custom-input p-3 rounded text-sm">
+        <input type="tel" id="telefono" placeholder="Teléfono / WhatsApp" class="custom-input p-3 rounded text-sm">
+        
+        <!-- Fecha -->
+        <input type="date" id="fecha" required class="custom-input p-3 rounded text-sm">
+        
+        <!-- Selector Único de Horario -->
+        <select id="hora" class="custom-input p-3 rounded text-sm" required disabled>
+          <option value="" disabled selected>Selecciona primero una fecha</option>
+          <option value="9:00 am">9:00</option>
+          <option value="9:30 am">9:30</option>
+          <option value="10:00 am">10:00</option>
+          <option value="10:30 am">10:30</option>
+          <option value="11:00 am">11:00</option>
+          <option value="11:30 am">11:30</option>
+          <option value="12:00 pm">12:00</option>
+          <option value="12:30 pm">12:30</option>
+          <option value="1:00 pm">1:00</option>
+          <option value="1:30 pm">1:30</option>
+          <option value="2:00 pm">2:00</option>
+          <option value="2:30 pm">2:30</option>
+          <option value="3:00 pm">3:00</option>
+          <option value="3:30 pm">3:30</option>
+          <option value="4:00 pm">4:00</option>
+          <option value="4:30 pm">4:30</option>
+          <option value="5:00 pm">5:00</option>
+          <option value="5:30 pm">5:30</option>
+          <option value="6:00 pm">6:00</option>
+          <option value="6:30 pm">6:30</option>
+          <option value="7:00 pm">7:00</option>
+          <option value="7:30 pm">7:30</option>
+          <option value="8:00 pm">8:00</option>
+          <option value="8:30 pm">8:30</option>
+          <option value="9:00 pm">9:00</option>
+        </select>
+
+        <select id="servicio" class="custom-input p-3 rounded text-sm" required>
           <option value="">Seleccionar Servicio</option>
           <option value="Corte Clásico">Corte Clásico</option>
-          <option value="Corte + Barba">Corte + Barba</option>
+          <option value="Corte Barba">Corte Barba</option>
           <option value="Corte Infantil">Corte Infantil</option>
         </select>
-        <select id="barbero" class="p-2 border rounded" required>
+        
+        <select id="barbero" class="custom-input p-3 rounded text-sm" required>
           <option value="Ricardo">Ricardo</option>
-          <!-- <option value="Carlos López">Carlos López</option>
-          <option value="María Rodríguez">María Rodríguez</option>-->
+          <option value="Carlos">Carlos</option>
         </select>
-        <input type="number" id="precio" placeholder="Precio ($)" class="p-2 border rounded">
-        <select id="metodoPago" class="p-2 border rounded">
+        
+        <input type="number" id="precio" placeholder="Precio ($)" value="150" disabled class="custom-input p-3 rounded text-sm font-semibold text-[#e5b757]">
+        
+        <select id="metodoPago" class="custom-input p-3 rounded text-sm">
           <option value="Efectivo">Efectivo</option>
-          <!--<option value="Tarjeta">Tarjeta</option>-->
           <option value="Transferencia">Transferencia</option>
         </select>
-        <textarea id="notas" placeholder="Notas o preferencias" class="md:col-span-2 p-2 border rounded"></textarea>
-        <button type="submit" class="md:col-span-2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Guardar Cita</button>
+        
+        <textarea id="notas" placeholder="Notas o preferencias del cliente" class="md:col-span-2 custom-input p-3 rounded text-sm h-24"></textarea>
+        
+        <!-- Botón de Envío -->
+        <button type="submit" id="submitBtn" class="md:col-span-2 bg-[#d3122a] hover:bg-[#b00e22] text-white font-bold py-3 rounded uppercase tracking-wider transition-all duration-300 shadow-lg shadow-red-900/30 mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span id="btnText">Guardar Cita</span>
+        </button>
       </form>
     </div>
 
     <!-- Tabla para Consultar Citas -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold text-gray-700">Lista de Citas</h2>
-        <button onclick="fetchAppointments()" class="bg-gray-800 text-white px-4 py-1 rounded text-sm">Actualizar</button>
+    <div class="bg-[#151515] p-6 rounded-lg border border-[#262626] shadow-2xl">
+      <div class="flex justify-between items-center mb-6 border-b border-[#262626] pb-3">
+        <h2 class="text-xl font-bold text-[#e5b757] flex items-center gap-2">
+          <span>✦</span> Lista de Citas
+        </h2>
+        <button onclick="fetchAppointments()" id="refreshBtn" class="bg-[#262626] hover:bg-[#333333] text-gray-200 border border-gray-700 px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold transition disabled:opacity-50">
+          Actualizar
+        </button>
       </div>
+
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-gray-100 border-b text-sm font-medium text-gray-600">
-              <th class="p-2">Fecha</th>
-              <th class="p-2">Hora</th>
-              <th class="p-2">Cliente</th>
-              <th class="p-2">Servicio</th>
-              <th class="p-2">Barbero</th>
-              <th class="p-2">Estado</th>
+            <tr class="bg-[#0c0c0c] border-b border-[#262626] text-xs font-bold text-gray-400 uppercase tracking-wider">
+              <th class="p-3">Fecha</th>
+              <th class="p-3">Hora</th>
+              <th class="p-3">Cliente</th>
+              <th class="p-3">Servicio</th>
+              <th class="p-3">Barbero</th>
+              <th class="p-3">Estado</th>
             </tr>
           </thead>
-          <tbody id="citasTable" class="text-sm divide-y">
+          <tbody id="citasTable" class="text-sm divide-y divide-[#262626] text-gray-300">
             <!-- Cargas dinámicas aquí -->
           </tbody>
         </table>
       </div>
     </div>
-
   </div>
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzp5pi6kORcXzziLHNvL8t-6at1BBUJj8molRYYrvyz_pFbQRnMbKrjISmDJlfM3hfL/exec';
+    
+    // Almacenamiento local de citas cargadas
+    let citasExistentes = [];
 
     // Cargar citas al iniciar
     document.addEventListener('DOMContentLoaded', fetchAppointments);
 
+    // Escuchar cambios en la fecha seleccionada
+    document.getElementById('fecha').addEventListener('change', actualizarHorariosDisponibles);
+
     // Obtener citas (GET)
     async function fetchAppointments() {
       const tbody = document.getElementById('citasTable');
-      tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center">Cargando...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">Cargando citas...</td></tr>';
       
       try {
         const res = await fetch(SCRIPT_URL);
         const json = await res.json();
         
+        citasExistentes = json.data || [];
+        
         tbody.innerHTML = '';
-        json.data.forEach(cita => {
+        citasExistentes.forEach(cita => {
           if (!cita.Cliente) return;
-          const row = `<tr>
-            <td class="p-2">${cita.Fecha ? new Date(cita.Fecha).toLocaleDateString() : ''}</td>
-            <td class="p-2">${cita['Hora Inicio'] || ''}</td>
-            <td class="p-2 font-medium">${cita.Cliente}</td>
-            <td class="p-2">${cita.Servicio}</td>
-            <td class="p-2">${cita.Barbero}</td>
-            <td class="p-2"><span class="px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-800">${cita.Estado}</span></td>
+          
+          const fechaFormateada = cita.Fecha ? new Date(cita.Fecha).toISOString().split('T')[0] : '';
+          const row = `<tr class="hover:bg-[#1a1a1a] transition">
+            <td class="p-3 text-gray-400">${fechaFormateada}</td>
+            <td class="p-3 font-semibold text-[#e5b757]">${cita['Hora Inicio'] || cita.Hora || ''}</td>
+            <td class="p-3 font-medium text-white">${cita.Cliente}</td>
+            <td class="p-3 text-gray-300">${cita.Servicio}</td>
+            <td class="p-3 text-gray-300">${cita.Barbero}</td>
+            <td class="p-3"><span class="px-2.5 py-1 rounded text-xs font-semibold bg-[#2a2200] text-[#e5b757] border border-[#554400]">${cita.Estado || 'Agendada'}</span></td>
           </tr>`;
           tbody.innerHTML += row;
         });
+
+        actualizarHorariosDisponibles();
+
       } catch (err) {
         tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500">Error al cargar datos</td></tr>';
       }
+    }
+
+    // Función para deshabilitar las horas ocupadas de la fecha seleccionada
+    function actualizarHorariosDisponibles() {
+      const fechaInput = document.getElementById('fecha').value;
+      const selectHora = document.getElementById('hora');
+
+      if (!fechaInput) {
+        selectHora.disabled = true;
+        return;
+      }
+
+      selectHora.disabled = false;
+
+      const horasOcupadas = citasExistentes
+        .filter(cita => {
+          if (!cita.Fecha) return false;
+          const fechaCita = new Date(cita.Fecha).toISOString().split('T')[0];
+          return fechaCita === fechaInput;
+        })
+        .map(cita => cita['Hora Inicio'] || cita.Hora);
+
+      Array.from(selectHora.options).forEach(option => {
+        if (!option.value) return;
+
+        if (horasOcupadas.includes(option.value)) {
+          option.disabled = true;
+          option.textContent = `${option.value} (Ocupado)`;
+        } else {
+          option.disabled = false;
+          option.textContent = option.value.includes(':') ? formatHoraTexto(option.value) : option.value;
+        }
+      });
+    }
+
+    function formatHoraTexto(hora) {
+      const [h, m] = hora.split(':');
+      const horaNum = parseInt(h);
+      const hora12 = horaNum % 12 || 12;
+      return `${hora12.toString().padStart(2, '0')}:${m}`;
     }
 
     // Guardar cita (POST)
     document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      const form = e.target;
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const refreshBtn = document.getElementById('refreshBtn');
+
+      const fecha = document.getElementById('fecha').value;
+      const hora = document.getElementById('hora').value;
+      
+      // Validar antes de enviar que el horario no esté tomado
+      const yaOcupado = citasExistentes.some(cita => {
+        if (!cita.Fecha) return false;    
+        const fechaCita = new Date(cita.Fecha).toISOString().split('T')[0];
+        const horaCita = cita['Hora Inicio'] || cita.Hora;
+        return fechaCita === fecha && horaCita === hora;
+      });
+        
+      if (yaOcupado) {
+        alert('Este horario y fecha ya no están disponibles. Por favor selecciona otro.');
+        return;
+      }
+
+      // === BLOQUEAR FORMULARIO Y CAMBIAR CURSOR ===
+      document.body.classList.add('is-submitting');
+      
+      // Deshabilitar todos los controles del formulario
+      const inputs = form.querySelectorAll('input, select, textarea, button');
+      inputs.forEach(input => input.disabled = true);
+      refreshBtn.disabled = true;
+
+      // Cambiar texto del botón e insertar spinner
+      btnText.innerHTML = `
+        <svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Guardando Cita...
+      `;
+
       const payload = {
         cliente: document.getElementById('cliente').value,
         telefono: document.getElementById('telefono').value,
-        fecha: document.getElementById('fecha').value,
-        horaInicio: document.getElementById('horaInicio').value,
-        horaFin: document.getElementById('horaFin').value,
+        fecha: fecha,
+        horaInicio: hora,
         servicio: document.getElementById('servicio').value,
         barbero: document.getElementById('barbero').value,
         precio: document.getElementById('precio').value,
         metodoPago: document.getElementById('metodoPago').value,
         notas: document.getElementById('notas').value
       };
-
+     
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors', // Evita bloqueos de CORS estándar de Apps Script
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
         alert('Cita enviada con éxito');
-        document.getElementById('appointmentForm').reset();
-        setTimeout(fetchAppointments, 1500); // Recargar tabla
+        form.reset();
+        
       } catch (err) {
         alert('Error al guardar la cita');
+      } finally {
+        // === RESTAURAR FORMULARIO Y CURSOR ===
+        document.body.classList.remove('is-submitting');
+        
+        inputs.forEach(input => {
+          // Mantener deshabilitados únicamente el precio y la hora
+          if (input.id !== 'precio' && input.id !== 'hora') {
+            input.disabled = false;
+          }
+        });
+        refreshBtn.disabled = false;
+        
+        btnText.textContent = 'Guardar Cita';
+        
+        setTimeout(fetchAppointments, 1000);
       }
     });
   </script>
