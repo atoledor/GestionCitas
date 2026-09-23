@@ -3,71 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control de Citas - La Luna Roja Barbershop</title>
+  <title>Gestión de Citas - La Luna Roja Barbershop</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
+  <!-- Google Fonts: UnifrakturMaguntia (Gótica) y Montserrat -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,500;0,700;0,900&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-
-  <style>
-    body { font-family: 'Montserrat', sans-serif; }
-    .font-gotica { font-family: 'UnifrakturMaguntia', cursive; }
-
-    .status-select {
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e5b757' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 0.5rem center;
-      background-size: 1em;
-      padding-right: 1.8rem;
-    }
-
-    .status-agendada { background-color: #2a2200; color: #e5b757; border-color: #554400; }
-    .status-confirmada { background-color: #062c16; color: #34d399; border-color: #0b5e30; }
-    .status-cancelada { background-color: #310a0e; color: #f87171; border-color: #6b141d; }
-
-    body.is-updating, body.is-updating * { cursor: wait !important; }
-  </style>
+  <!-- Archivo CSS Personalizado -->
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-[#0c0c0c] text-[#f0f0f0] min-h-screen p-4 md:p-8">
-  <div class="max-w-5xl mx-auto space-y-8">
+<body class="bg-[#0c0c0c] text-[#f0f0f0] min-h-screen p-4 md:p-8 relative">
+
+  <div class="max-w-4xl mx-auto space-y-8">
     
-    <!-- Encabezado / Logo -->
+    <!-- Encabezado / Logo Header -->
     <header class="relative flex flex-col md:flex-row items-center justify-between border-b border-[#262626] pb-4 pt-2">
+      
+      <!-- LOGO EN LA PARTE SUPERIOR IZQUIERDA -->
       <div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start mb-4 md:mb-0">
-       <!-- <img src="logo.jpg" alt="La Luna Roja Logo" class="h-16 w-16 md:h-20 md:w-20 object-contain rounded-md border border-[#262626]">-->
         <div class="block md:hidden">
           <h1 class="text-3xl font-gotica text-[#d3122a]">la luna roja.</h1>
         </div>
       </div>
 
+      <!-- TÍTULO PRINCIPAL -->
       <div class="text-center md:absolute md:left-1/2 md:-translate-x-1/2">
         <div class="text-[#e5b757] text-sm md:text-base tracking-widest">✦ 🌙 ✦</div>
         <h1 class="hidden md:block text-4xl font-gotica text-[#d3122a] tracking-wide drop-shadow-[0_2px_8px_rgba(211,18,42,0.3)]">
           la luna roja.
         </h1>
         <p class="text-xs md:text-sm font-black tracking-[0.3em] uppercase text-gray-300">
-          GESTIÓN Y ESTADO DE CITAS
+          BARBERSHOP &bull; CITAS
         </p>
       </div>
 
       <div class="hidden md:block w-20"></div>
     </header>
 
-    <!-- Tabla -->
+    <!-- Formulario para Guardar Citas -->
     <div class="bg-[#151515] p-6 rounded-lg border border-[#262626] shadow-2xl">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[#262626] pb-4">
-        <div>
-          <h2 class="text-xl font-bold text-[#e5b757] flex items-center gap-2">
-            <span>✦</span> Modificar Estado de Citas
-          </h2>
-          <p class="text-xs text-gray-400 mt-1">Cambia el valor en la columna Estado para actualizar la fila existente.</p>
-        </div>
-        <button onclick="fetchAppointments()" id="refreshBtn" class="bg-[#262626] hover:bg-[#333333] text-gray-200 border border-gray-700 px-4 py-2 rounded text-xs uppercase tracking-wider font-semibold transition">
-          Actualizar Tabla
+      <h2 class="text-xl font-bold mb-6 text-[#e5b757] flex items-center gap-2 border-b border-[#262626] pb-3">
+        <span>✦</span> Registrar Nueva Cita
+      </h2>
+      
+      <form id="appointmentForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" id="cliente" placeholder="Nombre del Cliente" required class="custom-input p-3 rounded text-sm">
+        <input type="tel" id="telefono" placeholder="Teléfono / WhatsApp" required class="custom-input p-3 rounded text-sm">
+        
+        <!-- Fecha -->
+        <input type="date" id="fecha" required class="custom-input p-3 rounded text-sm">
+        
+        <!-- Selector Único de Horario -->
+        <select id="hora" class="custom-input p-3 rounded text-sm" required disabled>
+          <option value="" disabled selected>Selecciona primero una fecha</option>
+          <option value="9:00 am">9:00 am</option>
+          <option value="9:30 am">9:30 am</option>
+          <option value="10:00 am">10:00 am</option>
+          <option value="10:30 am">10:30 am</option>
+          <option value="11:00 am">11:00 am</option>
+          <option value="11:30 am">11:30 am</option>
+          <option value="12:00 pm">12:00 pm</option>
+          <option value="12:30 pm">12:30 pm</option>
+          <option value="1:00 pm">1:00 pm</option>
+          <option value="1:30 pm">1:30 pm</option>
+          <option value="2:00 pm">2:00 pm</option>
+          <option value="2:30 pm">2:30 pm</option>
+          <option value="3:00 pm">3:00 pm</option>
+          <option value="3:30 pm">3:30 pm</option>
+          <option value="4:00 pm">4:00 pm</option>
+          <option value="4:30 pm">4:30 pm</option>
+          <option value="5:00 pm">5:00 pm</option>
+          <option value="5:30 pm">5:30 pm</option>
+          <option value="6:00 pm">6:00 pm</option>
+          <option value="6:30 pm">6:30 pm</option>
+          <option value="7:00 pm">7:00 pm</option>
+          <option value="7:30 pm">7:30 pm</option>
+          <option value="8:00 pm">8:00 pm</option>
+          <option value="8:30 pm">8:30 pm</option>
+          <option value="9:00 pm">9:00 pm</option>
+        </select>
+
+        <select id="servicio" class="custom-input p-3 rounded text-sm" required>
+          <option value="">Seleccionar Servicio</option>
+          <option value="Corte Clásico">Corte Clásico</option>
+          <option value="Corte Barba">Corte Barba</option>
+          <option value="Corte Infantil">Corte Infantil</option>
+        </select>
+        
+        <select id="barbero" class="custom-input p-3 rounded text-sm" required>
+          <option value="">Seleccionar Barbero</option>
+          <option value="Ricardo">Ricardo/Dino</option>
+          <option value="Carlos">El Wero</option>
+        </select>
+        
+        <input type="number" id="precio" placeholder="Precio ($)" value="150" disabled class="custom-input p-3 rounded text-sm font-semibold text-[#e5b757]">
+        
+        <select id="metodoPago" class="custom-input p-3 rounded text-sm" required>
+          <option value="">Tipo de Pago</option>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Transferencia">Transferencia</option>
+        </select>
+        
+        <textarea id="notas" placeholder="Notas o preferencias del cliente" class="md:col-span-2 custom-input p-3 rounded text-sm h-24"></textarea>
+        
+        <!-- Botón de Envío -->
+        <button type="submit" id="submitBtn" class="md:col-span-2 bg-[#d3122a] hover:bg-[#b00e22] text-white font-bold py-3 rounded uppercase tracking-wider transition-all duration-300 shadow-lg shadow-red-900/30 mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span id="btnText">Guardar Cita</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabla para Consultar Citas -->
+    <div class="bg-[#151515] p-6 rounded-lg border border-[#262626] shadow-2xl">
+      <div class="flex justify-between items-center mb-6 border-b border-[#262626] pb-3">
+        <h2 class="text-xl font-bold text-[#e5b757] flex items-center gap-2">
+          <span>✦</span> Lista de Citas
+        </h2>
+        <button id="refreshBtn" class="bg-[#262626] hover:bg-[#333333] text-gray-200 border border-gray-700 px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold transition disabled:opacity-50">
+          Actualizar
         </button>
       </div>
 
@@ -84,100 +138,44 @@
             </tr>
           </thead>
           <tbody id="citasTable" class="text-sm divide-y divide-[#262626] text-gray-300">
-            <!-- Dinámico -->
+            <!-- Cargas dinámicas aquí -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzp5pi6kORcXzziLHNvL8t-6at1BBUJj8molRYYrvyz_pFbQRnMbKrjISmDJlfM3hfL/exec';
-    let citasExistentes = [];
+  <!-- MODAL / POPUP PERSONALIZADO -->
+  <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- Backdrop oscuro -->
+    <div id="modalBackdrop" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm opacity-0"></div>
+    
+    <!-- Contenido del Modal -->
+    <div id="modalContent" class="modal-content relative bg-[#151515] border border-[#e5b757] rounded-xl p-6 md:p-8 max-w-sm w-11/12 mx-auto text-center shadow-[0_10px_30px_rgba(211,18,42,0.3)] transform scale-95 opacity-0 z-10">
+      
+      <!-- Icono Dinámico (Éxito / Advertencia / Error) -->
+      <div id="modalIconContainer" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 border border-[#e5b757]/30 bg-[#262626]">
+        <span id="modalIcon" class="text-3xl">🌙</span>
+      </div>
 
-    document.addEventListener('DOMContentLoaded', fetchAppointments);
+      <!-- Título del Modal -->
+      <h3 id="modalTitle" class="text-xl font-bold font-gotica text-[#e5b757] mb-2 tracking-wide">
+        La Luna Roja
+      </h3>
 
-    async function fetchAppointments() {
-      const tbody = document.getElementById('citasTable');
-      tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-500">Cargando citas...</td></tr>';
+      <!-- Mensaje Principal -->
+      <p id="modalMessage" class="text-sm text-gray-300 mb-6 leading-relaxed">
+        Mensaje del sistema.
+      </p>
 
-      try {
-        const res = await fetch(SCRIPT_URL);
-        const json = await res.json();
-        citasExistentes = json.data || [];
-        tbody.innerHTML = '';
+      <!-- Botón Entendido / Cerrar -->
+      <button id="closeModalBtn" class="w-full bg-[#d3122a] hover:bg-[#b00e22] text-white font-bold py-2.5 rounded-lg uppercase tracking-wider text-xs transition-all duration-300 shadow-md hover:shadow-red-900/50">
+        Aceptar
+      </button>
+    </div>
+  </div>
 
-        citasExistentes.forEach((cita, index) => {
-          if (!cita.Cliente) return;
-
-          const fechaFormateada = cita.Fecha ? new Date(cita.Fecha).toISOString().split('T')[0] : '';
-          const estadoActual = (cita.Estado || 'Agendada').toUpperCase();
-
-          let statusClass = 'status-agendada';
-          if (estadoActual === 'CONFIRMADA') statusClass = 'status-confirmada';
-          if (estadoActual === 'CANCELADA') statusClass = 'status-cancelada';
-
-          const row = `<tr class="hover:bg-[#1a1a1a] transition">
-            <td class="p-3 text-gray-400 font-mono">${fechaFormateada}</td>
-            <td class="p-3 font-semibold text-[#e5b757] font-mono">${cita['Hora Inicio'] || cita.Hora || ''}</td>
-            <td class="p-3 font-medium text-white">${cita.Cliente}</td>
-            <td class="p-3 text-gray-300">${cita.Servicio}</td>
-            <td class="p-3 text-gray-300">${cita.Barbero}</td>
-            <td class="p-3">
-              <select 
-                onchange="cambiarEstadoCita(this, ${index})" 
-                class="status-select ${statusClass} text-xs font-bold px-3 py-1.5 rounded border transition cursor-pointer outline-none">
-                <option value="Agendada" class="bg-[#151515] text-[#e5b757]" ${estadoActual === 'AGENDADA' ? 'selected' : ''}>AGENDADA</option>
-                <option value="CONFIRMADA" class="bg-[#151515] text-[#34d399]" ${estadoActual === 'CONFIRMADA' ? 'selected' : ''}>CONFIRMADA</option>
-                <option value="Cancelada" class="bg-[#151515] text-[#f87171]" ${estadoActual === 'CANCELADA' ? 'selected' : ''}>CANCELADA</option>
-              </select>
-            </td>
-          </tr>`;
-          tbody.innerHTML += row;
-        });
-      } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500">Error al cargar citas</td></tr>';
-      }
-    }
-
-    async function cambiarEstadoCita(selectElement, index) {
-      const nuevoEstado = selectElement.value;
-      const cita = citasExistentes[index];
-
-      // Cambiar clases de color
-      selectElement.classList.remove('status-agendada', 'status-confirmada', 'status-cancelada');
-      if (nuevoEstado.toUpperCase() === 'CONFIRMADA') selectElement.classList.add('status-confirmada');
-      else if (nuevoEstado.toUpperCase() === 'CANCELADA') selectElement.classList.add('status-cancelada');
-      else selectElement.classList.add('status-agendada');
-
-      document.body.classList.add('is-updating');
-      selectElement.disabled = true;
-
-      // Se envía 'action: UPDATE_ESTADO' indicando qué registro buscar
-      const payload = {
-        action: "UPDATE_ESTADO",
-        cliente: cita.Cliente,
-        fecha: cita.Fecha ? new Date(cita.Fecha).toISOString().split('T')[0] : '',
-        horaInicio: cita['Hora Inicio'] || cita.Hora,
-        estado: nuevoEstado
-      };
-
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        citasExistentes[index].Estado = nuevoEstado;
-      } catch (err) {
-        alert('Error al modificar el estado');
-      } finally {
-        document.body.classList.remove('is-updating');
-        selectElement.disabled = false;
-      }
-    }
-  </script>
+  <!-- Archivo JavaScript Personalizado -->
+  <script src="script.js"></script>
 </body>
 </html>
