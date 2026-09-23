@@ -10,51 +10,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,500;0,700;0,900&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-    }
-    .font-gotica {
-      font-family: 'UnifrakturMaguntia', cursive;
-    }
-    /* Estilos personalizados para los inputs en modo oscuro */
-    .custom-input {
-      background-color: #0c0c0c;
-      border: 1px solid #262626;
-      color: #f0f0f0;
-    }
-    .custom-input:focus {
-      outline: none;
-      border-color: #d3122a;
-      box-shadow: 0 0 5px rgba(211, 18, 42, 0.4);
-    }
-    .custom-input:disabled {
-      background-color: #1a1a1a;
-      color: #555555;
-      border-color: #222222;
-      cursor: not-allowed;
-    }
-    /* Estilo para las opciones deshabilitadas del select */
-    option:disabled {
-      color: #666666;
-      background-color: #1a1a1a;
-    }
-
-    /* Icono del calendario nativo en color blanco */
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
-    }
-
-    /* Estilo de carga global cuando se envía el formulario */
-    body.is-submitting, 
-    body.is-submitting * {
-      cursor: wait !important;
-    }
-  </style>
+  <!-- Archivo CSS Personalizado -->
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-[#0c0c0c] text-[#f0f0f0] min-h-screen p-4 md:p-8">
+<body class="bg-[#0c0c0c] text-[#f0f0f0] min-h-screen p-4 md:p-8 relative">
+
   <div class="max-w-4xl mx-auto space-y-8">
     
     <!-- Encabezado / Logo Header -->
@@ -62,7 +22,6 @@
       
       <!-- LOGO EN LA PARTE SUPERIOR IZQUIERDA -->
       <div class="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start mb-4 md:mb-0">
-       <!-- <img src="logo.jpg" alt="La Luna Roja Barbershop Logo" class="h-16 w-16 md:h-20 md:w-20 object-contain rounded-md border border-[#262626]"> -->
         <div class="block md:hidden">
           <h1 class="text-3xl font-gotica text-[#d3122a]">la luna roja.</h1>
         </div>
@@ -90,7 +49,7 @@
       
       <form id="appointmentForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input type="text" id="cliente" placeholder="Nombre del Cliente" required class="custom-input p-3 rounded text-sm">
-        <input type="tel" id="telefono" placeholder="Teléfono / WhatsApp" class="custom-input p-3 rounded text-sm">
+        <input type="tel" id="telefono" placeholder="Teléfono / WhatsApp" required class="custom-input p-3 rounded text-sm">
         
         <!-- Fecha -->
         <input type="date" id="fecha" required class="custom-input p-3 rounded text-sm">
@@ -98,31 +57,31 @@
         <!-- Selector Único de Horario -->
         <select id="hora" class="custom-input p-3 rounded text-sm" required disabled>
           <option value="" disabled selected>Selecciona primero una fecha</option>
-          <option value="9:00 am">9:00</option>
-          <option value="9:30 am">9:30</option>
-          <option value="10:00 am">10:00</option>
-          <option value="10:30 am">10:30</option>
-          <option value="11:00 am">11:00</option>
-          <option value="11:30 am">11:30</option>
-          <option value="12:00 pm">12:00</option>
-          <option value="12:30 pm">12:30</option>
-          <option value="1:00 pm">1:00</option>
-          <option value="1:30 pm">1:30</option>
-          <option value="2:00 pm">2:00</option>
-          <option value="2:30 pm">2:30</option>
-          <option value="3:00 pm">3:00</option>
-          <option value="3:30 pm">3:30</option>
-          <option value="4:00 pm">4:00</option>
-          <option value="4:30 pm">4:30</option>
-          <option value="5:00 pm">5:00</option>
-          <option value="5:30 pm">5:30</option>
-          <option value="6:00 pm">6:00</option>
-          <option value="6:30 pm">6:30</option>
-          <option value="7:00 pm">7:00</option>
-          <option value="7:30 pm">7:30</option>
-          <option value="8:00 pm">8:00</option>
-          <option value="8:30 pm">8:30</option>
-          <option value="9:00 pm">9:00</option>
+          <option value="9:00 am">9:00 am</option>
+          <option value="9:30 am">9:30 am</option>
+          <option value="10:00 am">10:00 am</option>
+          <option value="10:30 am">10:30 am</option>
+          <option value="11:00 am">11:00 am</option>
+          <option value="11:30 am">11:30 am</option>
+          <option value="12:00 pm">12:00 pm</option>
+          <option value="12:30 pm">12:30 pm</option>
+          <option value="1:00 pm">1:00 pm</option>
+          <option value="1:30 pm">1:30 pm</option>
+          <option value="2:00 pm">2:00 pm</option>
+          <option value="2:30 pm">2:30 pm</option>
+          <option value="3:00 pm">3:00 pm</option>
+          <option value="3:30 pm">3:30 pm</option>
+          <option value="4:00 pm">4:00 pm</option>
+          <option value="4:30 pm">4:30 pm</option>
+          <option value="5:00 pm">5:00 pm</option>
+          <option value="5:30 pm">5:30 pm</option>
+          <option value="6:00 pm">6:00 pm</option>
+          <option value="6:30 pm">6:30 pm</option>
+          <option value="7:00 pm">7:00 pm</option>
+          <option value="7:30 pm">7:30 pm</option>
+          <option value="8:00 pm">8:00 pm</option>
+          <option value="8:30 pm">8:30 pm</option>
+          <option value="9:00 pm">9:00 pm</option>
         </select>
 
         <select id="servicio" class="custom-input p-3 rounded text-sm" required>
@@ -133,13 +92,15 @@
         </select>
         
         <select id="barbero" class="custom-input p-3 rounded text-sm" required>
-          <option value="Ricardo">Ricardo</option>
-          <option value="Carlos">Carlos</option>
+          <option value="">Seleccionar Barbero</option>
+          <option value="Ricardo">Ricardo/Dino</option>
+          <option value="Carlos">El Wero</option>
         </select>
         
         <input type="number" id="precio" placeholder="Precio ($)" value="150" disabled class="custom-input p-3 rounded text-sm font-semibold text-[#e5b757]">
         
-        <select id="metodoPago" class="custom-input p-3 rounded text-sm">
+        <select id="metodoPago" class="custom-input p-3 rounded text-sm" required>
+          <option value="">Tipo de Pago</option>
           <option value="Efectivo">Efectivo</option>
           <option value="Transferencia">Transferencia</option>
         </select>
@@ -159,7 +120,7 @@
         <h2 class="text-xl font-bold text-[#e5b757] flex items-center gap-2">
           <span>✦</span> Lista de Citas
         </h2>
-        <button onclick="fetchAppointments()" id="refreshBtn" class="bg-[#262626] hover:bg-[#333333] text-gray-200 border border-gray-700 px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold transition disabled:opacity-50">
+        <button id="refreshBtn" class="bg-[#262626] hover:bg-[#333333] text-gray-200 border border-gray-700 px-4 py-1.5 rounded text-xs uppercase tracking-wider font-semibold transition disabled:opacity-50">
           Actualizar
         </button>
       </div>
@@ -184,176 +145,37 @@
     </div>
   </div>
 
-  <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzp5pi6kORcXzziLHNvL8t-6at1BBUJj8molRYYrvyz_pFbQRnMbKrjISmDJlfM3hfL/exec';
+  <!-- MODAL / POPUP PERSONALIZADO -->
+  <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- Backdrop oscuro -->
+    <div id="modalBackdrop" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm opacity-0"></div>
     
-    // Almacenamiento local de citas cargadas
-    let citasExistentes = [];
-
-    // Cargar citas al iniciar
-    document.addEventListener('DOMContentLoaded', fetchAppointments);
-
-    // Escuchar cambios en la fecha seleccionada
-    document.getElementById('fecha').addEventListener('change', actualizarHorariosDisponibles);
-
-    // Obtener citas (GET)
-    async function fetchAppointments() {
-      const tbody = document.getElementById('citasTable');
-      tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">Cargando citas...</td></tr>';
+    <!-- Contenido del Modal -->
+    <div id="modalContent" class="modal-content relative bg-[#151515] border border-[#e5b757] rounded-xl p-6 md:p-8 max-w-sm w-11/12 mx-auto text-center shadow-[0_10px_30px_rgba(211,18,42,0.3)] transform scale-95 opacity-0 z-10">
       
-      try {
-        const res = await fetch(SCRIPT_URL);
-        const json = await res.json();
-        
-        citasExistentes = json.data || [];
-        
-        tbody.innerHTML = '';
-        citasExistentes.forEach(cita => {
-          if (!cita.Cliente) return;
-          
-          const fechaFormateada = cita.Fecha ? new Date(cita.Fecha).toISOString().split('T')[0] : '';
-          const row = `<tr class="hover:bg-[#1a1a1a] transition">
-            <td class="p-3 text-gray-400">${fechaFormateada}</td>
-            <td class="p-3 font-semibold text-[#e5b757]">${cita['Hora Inicio'] || cita.Hora || ''}</td>
-            <td class="p-3 font-medium text-white">${cita.Cliente}</td>
-            <td class="p-3 text-gray-300">${cita.Servicio}</td>
-            <td class="p-3 text-gray-300">${cita.Barbero}</td>
-            <td class="p-3"><span class="px-2.5 py-1 rounded text-xs font-semibold bg-[#2a2200] text-[#e5b757] border border-[#554400]">${cita.Estado || 'Agendada'}</span></td>
-          </tr>`;
-          tbody.innerHTML += row;
-        });
+      <!-- Icono Dinámico (Éxito / Advertencia / Error) -->
+      <div id="modalIconContainer" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 border border-[#e5b757]/30 bg-[#262626]">
+        <span id="modalIcon" class="text-3xl">🌙</span>
+      </div>
 
-        actualizarHorariosDisponibles();
+      <!-- Título del Modal -->
+      <h3 id="modalTitle" class="text-xl font-bold font-gotica text-[#e5b757] mb-2 tracking-wide">
+        La Luna Roja
+      </h3>
 
-      } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500">Error al cargar datos</td></tr>';
-      }
-    }
+      <!-- Mensaje Principal -->
+      <p id="modalMessage" class="text-sm text-gray-300 mb-6 leading-relaxed">
+        Mensaje del sistema.
+      </p>
 
-    // Función para deshabilitar las horas ocupadas de la fecha seleccionada
-    function actualizarHorariosDisponibles() {
-      const fechaInput = document.getElementById('fecha').value;
-      const selectHora = document.getElementById('hora');
+      <!-- Botón Entendido / Cerrar -->
+      <button id="closeModalBtn" class="w-full bg-[#d3122a] hover:bg-[#b00e22] text-white font-bold py-2.5 rounded-lg uppercase tracking-wider text-xs transition-all duration-300 shadow-md hover:shadow-red-900/50">
+        Aceptar
+      </button>
+    </div>
+  </div>
 
-      if (!fechaInput) {
-        selectHora.disabled = true;
-        return;
-      }
-
-      selectHora.disabled = false;
-
-      const horasOcupadas = citasExistentes
-        .filter(cita => {
-          if (!cita.Fecha) return false;
-          const fechaCita = new Date(cita.Fecha).toISOString().split('T')[0];
-          return fechaCita === fechaInput;
-        })
-        .map(cita => cita['Hora Inicio'] || cita.Hora);
-
-      Array.from(selectHora.options).forEach(option => {
-        if (!option.value) return;
-
-        if (horasOcupadas.includes(option.value)) {
-          option.disabled = true;
-          option.textContent = `${option.value} (Ocupado)`;
-        } else {
-          option.disabled = false;
-          option.textContent = option.value.includes(':') ? formatHoraTexto(option.value) : option.value;
-        }
-      });
-    }
-
-    function formatHoraTexto(hora) {
-      const [h, m] = hora.split(':');
-      const horaNum = parseInt(h);
-      const hora12 = horaNum % 12 || 12;
-      return `${hora12.toString().padStart(2, '0')}:${m}`;
-    }
-
-    // Guardar cita (POST)
-    document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const form = e.target;
-      const submitBtn = document.getElementById('submitBtn');
-      const btnText = document.getElementById('btnText');
-      const refreshBtn = document.getElementById('refreshBtn');
-
-      const fecha = document.getElementById('fecha').value;
-      const hora = document.getElementById('hora').value;
-      
-      // Validar antes de enviar que el horario no esté tomado
-      const yaOcupado = citasExistentes.some(cita => {
-        if (!cita.Fecha) return false;    
-        const fechaCita = new Date(cita.Fecha).toISOString().split('T')[0];
-        const horaCita = cita['Hora Inicio'] || cita.Hora;
-        return fechaCita === fecha && horaCita === hora;
-      });
-        
-      if (yaOcupado) {
-        alert('Este horario y fecha ya no están disponibles. Por favor selecciona otro.');
-        return;
-      }
-
-      // === BLOQUEAR FORMULARIO Y CAMBIAR CURSOR ===
-      document.body.classList.add('is-submitting');
-      
-      // Deshabilitar todos los controles del formulario
-      const inputs = form.querySelectorAll('input, select, textarea, button');
-      inputs.forEach(input => input.disabled = true);
-      refreshBtn.disabled = true;
-
-      // Cambiar texto del botón e insertar spinner
-      btnText.innerHTML = `
-        <svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        Guardando Cita...
-      `;
-
-      const payload = {
-        cliente: document.getElementById('cliente').value,
-        telefono: document.getElementById('telefono').value,
-        fecha: fecha,
-        horaInicio: hora,
-        servicio: document.getElementById('servicio').value,
-        barbero: document.getElementById('barbero').value,
-        precio: document.getElementById('precio').value,
-        metodoPago: document.getElementById('metodoPago').value,
-        notas: document.getElementById('notas').value
-      };
-     
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        alert('Cita enviada para su Revisión y Confirmación.');
-        form.reset();
-        
-      } catch (err) {
-        alert('Error al guardar la cita');
-      } finally {
-        // === RESTAURAR FORMULARIO Y CURSOR ===
-        document.body.classList.remove('is-submitting');
-        
-        inputs.forEach(input => {
-          // Mantener deshabilitados únicamente el precio y la hora
-          if (input.id !== 'precio' && input.id !== 'hora') {
-            input.disabled = false;
-          }
-        });
-        refreshBtn.disabled = false;
-        
-        btnText.textContent = 'Guardar Cita';
-        
-        setTimeout(fetchAppointments, 1000);
-      }
-    });
-  </script>
+  <!-- Archivo JavaScript Personalizado -->
+  <script src="script.js"></script>
 </body>
 </html>
