@@ -1,16 +1,47 @@
+/* Suavizado de fuentes WebKit y altura adaptable a iOS */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
 .font-gotica {
   font-family: 'UnifrakturMaguntia', cursive;
 }
 
-/* Estilos personalizados para los inputs en modo oscuro */
+/* Estilos personalizados para inputs y selects en WebKit/iOS */
 .custom-input {
   background-color: #0c0c0c;
   border: 1px solid #262626;
   color: #f0f0f0;
+  /* Elimina el estilo/sombra por defecto de iOS */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.375rem;
+  /* Evita el auto-zoom en iOS al hacer foco (mínimo 16px de font-size en móviles) */
+  font-size: 16px; 
+}
+
+@media (min-width: 768px) {
+  .custom-input {
+    font-size: 0.875rem; /* 14px en escritorio */
+  }
+}
+
+/* Asegura el color del texto en select para iOS */
+select.custom-input {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%20%23f0f0f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
 }
 
 .custom-input:focus {
@@ -21,9 +52,11 @@ body {
 
 .custom-input:disabled {
   background-color: #1a1a1a;
-  color: #555555;
+  color: #666666;
   border-color: #222222;
   cursor: not-allowed;
+  -webkit-text-fill-color: #666666; /* Fuerza el color en iOS desactivado */
+  opacity: 1; /* Cancela la opacidad automática de iOS */
 }
 
 /* Estilo para las opciones deshabilitadas del select */
@@ -32,10 +65,19 @@ option:disabled {
   background-color: #1a1a1a;
 }
 
-/* Icono del calendario nativo en color blanco */
+/* Icono del calendario nativo en WebKit */
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
   cursor: pointer;
+  opacity: 1;
+  display: block;
+  -webkit-appearance: date-field;
+}
+
+/* Ajuste de alineación interna de input date en iOS WebKit */
+input[type="date"] {
+  min-height: 2.8rem;
+  line-height: 1.2;
 }
 
 /* Estilo de carga global cuando se envía el formulario */
@@ -47,8 +89,16 @@ body.is-submitting * {
 /* Transiciones suaves para el Modal Popup */
 .modal-backdrop {
   transition: opacity 0.3s ease-in-out;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
 
 .modal-content {
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  -webkit-transform: scale(0.95);
+}
+
+/* Desplazamiento suave nativo en iOS */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
 }
