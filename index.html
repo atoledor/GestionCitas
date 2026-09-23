@@ -54,7 +54,16 @@
         <input type="tel" id="telefono" placeholder="Teléfono / WhatsApp" required class="custom-input p-3 rounded text-sm">
         
         <!-- Fecha -->
-        <input type="date" id="fecha" required class="custom-input p-3 rounded text-sm">
+        <input 
+    			type="text" 
+    			placeholder="Selecciona tu fecha" 
+    			id="fecha"
+    			required 
+    			class="custom-input p-3 rounded text-sm"
+    			onfocus="this.type='date'" 
+    			onblur="if(!this.value)this.type='text'"
+		    />
+        <!-- <input type="date" id="fecha" required class="custom-input p-3 rounded text-sm">-->
         
         <!-- Selector Único de Horario -->
         <select id="hora" class="custom-input p-3 rounded text-sm" required disabled>
