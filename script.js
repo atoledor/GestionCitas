@@ -5,7 +5,64 @@ let citasExistentes = [];
 
 // Identificador para el temporizador de auto-refresco
 let autoRefreshTimer = null;
-const DIEZ_MINUTOS = 5 * 60 * 1000; // 5 minutos en milisegundos
+const DIEZ_MINUTOS = 5 * 60 * 1000;
+
+// -------------------------------------------------------------
+// FUNCIONES AUXILIARES SEGURAS PARA FECHAS (iOS Safari Compliant)
+// -------------------------------------------------------------
+
+// Convierte cualquier valor de fecha a formato YYYY-MM-DD de forma segura
+function normalizarFechaString(fechaRaw) {
+  if (!fechaRaw) return '';
+  
+  // Si ya viene como string YYYY-MM-DD...
+  if (typeof fechaRaw === 'string' && /^\d{4}-\d{2}-\d{2}/.test(fechaRaw)) {
+    return fechaRaw.split('T')[0];
+  }
+  
+  const d = new Date(fechaRaw);
+  if (isNaN(d.getTime())) return ''; // Evita RangeError en iOS
+
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getFechaHoyString() {
+  const hoy = new Date();
+  const yyyy = hoy.getFullYear();
+  const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+  const dd = String(hoy.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function parseFechaHora(fechaStr, horaStr) {
+  if (!fechaStr || !horaStr) return null;
+
+  const partesFecha = fechaStr.split('-').map(Number);
+  if (partesFecha.length !== 3) return null;
+  const [year, month, day] = partesFecha;
+  
+  const match = horaStr.trim().match(/^(\d{1,2}):(\d{2})\s*(am|pm)?$/i);
+  if (!match) return null;
+
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const period = match[3] ? match[3].toLowerCase() : null;
+
+  if (period === 'pm' && hours < 12) hours += 12;
+  if (period === 'am' && hours === 12) hours = 0;
+
+  return new Date(year, month - 1, day, hours, minutes, 0, 0);
+}
+
+function formatHoraTexto(hora) {
+  const [h, m] = hora.split(':');
+  const horaNum = parseInt(h, 10);
+  const hora12 = horaNum % 12 || 12;
+  return `${hora12.toString().padStart(2, '0')}:${m}`;
+}
 
 // -------------------------------------------------------------
 // FUNCIONES DEL MODAL / POPUP
@@ -19,10 +76,11 @@ function showModal(mensaje, titulo = "La Luna Roja", tipo = "success") {
   const iconContainer = document.getElementById('modalIconContainer');
   const icon = document.getElementById('modalIcon');
 
+  if (!modal || !backdrop || !content) return;
+
   modalTitle.textContent = titulo;
   modalMessage.textContent = mensaje;
 
-  // Personalizar ícono y estilo según el tipo de mensaje
   if (tipo === 'success') {
     iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 border border-[#e5b757] bg-[#2a2200] text-[#e5b757]";
     icon.textContent = "✔";
@@ -37,10 +95,8 @@ function showModal(mensaje, titulo = "La Luna Roja", tipo = "success") {
     icon.textContent = "🌙";
   }
 
-  // Mostrar modal desocultándolo primero
   modal.classList.remove('hidden');
 
-  // Animación de entrada
   setTimeout(() => {
     backdrop.classList.remove('opacity-0');
     backdrop.classList.add('opacity-100');
@@ -55,7 +111,8 @@ function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
   const content = document.getElementById('modalContent');
 
-  // Animación de salida
+  if (!modal || !backdrop || !content) return;
+
   backdrop.classList.remove('opacity-100');
   backdrop.classList.add('opacity-0');
   
@@ -67,33 +124,38 @@ function closeModal() {
   }, 300);
 }
 
-// Inicialización al cargar el DOM
+// -------------------------------------------------------------
+// INICIALIZACIÓN
+// -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-  // Configurar escuchadores de eventos para el modal
   const backdrop = document.getElementById('modalBackdrop');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const refreshBtn = document.getElementById('refreshBtn');
+  const fechaInput = document.getElementById('fecha');
+  const inputTel = document.getElementById('telefono');
+  const appointmentForm = document.getElementById('appointmentForm');
 
   if (backdrop) backdrop.addEventListener('click', closeModal);
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
   if (refreshBtn) refreshBtn.addEventListener('click', fetchAppointmentsManual);
 
-  // Bloquear fechas pasadas en el selector de fecha (input date)
-  const fechaInput = document.getElementById('fecha');
-  const hoyStr = getFechaHoyString();
-  fechaInput.min = hoyStr;
+  if (fechaInput) {
+    fechaInput.min = getFechaHoyString();
+    fechaInput.addEventListener('change', actualizarHorariosDisponibles);
+  }
 
-  fetchAppointments();
-  iniciarAutoRefresh();
-  
-  // Aplicar la restricción de solo números al input de teléfono
-  const inputTel = document.getElementById('telefono');
   if (inputTel) {
     restringirSoloNumeros(inputTel);
   }
+
+  if (appointmentForm) {
+    appointmentForm.addEventListener('submit', handleFormSubmit);
+  }
+
+  fetchAppointments();
+  iniciarAutoRefresh();
 });
 
-// Iniciar el temporizador para actualizar cada 10 minutos
 function iniciarAutoRefresh() {
   if (autoRefreshTimer) clearInterval(autoRefreshTimer);
   autoRefreshTimer = setInterval(() => {
@@ -101,54 +163,24 @@ function iniciarAutoRefresh() {
   }, DIEZ_MINUTOS);
 }
 
-// Función ejecutada por el botón "Actualizar"
 function fetchAppointmentsManual() {
   fetchAppointments();
-  iniciarAutoRefresh(); // Reinicia la cuenta de 10 minutos
+  iniciarAutoRefresh();
 }
 
-// Devuelve fecha de hoy en formato YYYY-MM-DD
-function getFechaHoyString() {
-  const hoy = new Date();
-  const yyyy = hoy.getFullYear();
-  const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-  const dd = String(hoy.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-// Convierte "YYYY-MM-DD" y "9:30 am" a un objeto Date de JavaScript
-function parseFechaHora(fechaStr, horaStr) {
-  if (!fechaStr || !horaStr) return null;
-
-  const [year, month, day] = fechaStr.split('-').map(Number);
-  
-  // Extraer hora, minutos y periodo (am/pm)
-  const match = horaStr.trim().match(/^(\d{1,2}):(\d{2})\s*(am|pm)?$/i);
-  if (!match) return null;
-
-  let hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2], 10);
-  const period = match[3] ? match[3].toLowerCase() : null;
-
-  if (period === 'pm' && hours < 12) hours += 12;
-  if (period === 'am' && hours === 12) hours = 0;
-
-  return new Date(year, month - 1, day, hours, minutes, 0, 0);
-}
-
-// Escuchar cambios en la fecha seleccionada
-document.getElementById('fecha').addEventListener('change', actualizarHorariosDisponibles);
-
-// Función para restringir solo números
 function restringirSoloNumeros(inputElement) {
   inputElement.addEventListener('input', (event) => {
     event.target.value = event.target.value.replace(/\D/g, '');
   });
 }
 
-// Obtener citas (GET)
+// -------------------------------------------------------------
+// CONSULTA Y RENDERIZADO DE CITAS
+// -------------------------------------------------------------
 async function fetchAppointments() {
   const tbody = document.getElementById('citasTable');
+  if (!tbody) return;
+
   tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">Cargando citas...</td></tr>';
   
   try {
@@ -163,27 +195,27 @@ async function fetchAppointments() {
       return;
     }
 
-    // Ordenar registros por fecha y hora de menor a mayor (orden ascendente)
+    // Ordenar de forma segura evitando excepciones en iOS
     citasExistentes.sort((a, b) => {
-      const fechaA = parseFechaHora(
-        a.Fecha ? new Date(a.Fecha).toISOString().split('T')[0] : '',
-        a['Hora Inicio'] || a.Hora || '12:00 am'
-      );
-      const fechaB = parseFechaHora(
-        b.Fecha ? new Date(b.Fecha).toISOString().split('T')[0] : '',
-        b['Hora Inicio'] || b.Hora || '12:00 am'
-      );
-      return (fechaA || 0) - (fechaB || 0);
+      const fechaAStr = normalizarFechaString(a.Fecha);
+      const fechaBStr = normalizarFechaString(b.Fecha);
+
+      const fechaA = parseFechaHora(fechaAStr, a['Hora Inicio'] || a.Hora || '12:00 am');
+      const fechaB = parseFechaHora(fechaBStr, b['Hora Inicio'] || b.Hora || '12:00 am');
+
+      const timeA = fechaA ? fechaA.getTime() : 0;
+      const timeB = fechaB ? fechaB.getTime() : 0;
+
+      return timeA - timeB;
     });
 
     citasExistentes.forEach(cita => {
       if (!cita.Cliente) return;
       
-      const fechaFormateada = cita.Fecha ? new Date(cita.Fecha).toISOString().split('T')[0] : '';
+      const fechaFormateada = normalizarFechaString(cita.Fecha);
       const estado = cita.Estado || 'Agendada';
       const esConfirmada = estado.trim().toUpperCase() === 'CONFIRMADA' || estado.trim().toUpperCase() === 'CONFIRMADO';
       
-      // Asignar clases de color en base al estado
       const badgeClass = esConfirmada
         ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-600'
         : 'bg-[#2a2200] text-[#e5b757] border border-[#554400]';
@@ -206,33 +238,33 @@ async function fetchAppointments() {
   }
 }
 
-// Función para deshabilitar las horas ocupadas y horas del pasado
 function actualizarHorariosDisponibles() {
-  const fechaInput = document.getElementById('fecha').value;
+  const fechaInput = document.getElementById('fecha');
   const selectHora = document.getElementById('hora');
 
-  if (!fechaInput) {
+  if (!fechaInput || !selectHora) return;
+  const fechaValue = fechaInput.value;
+
+  if (!fechaValue) {
     selectHora.disabled = true;
     return;
   }
 
   selectHora.disabled = false;
-
   const ahora = new Date();
 
   const horasOcupadas = citasExistentes
     .filter(cita => {
       if (!cita.Fecha) return false;
-      const fechaCita = new Date(cita.Fecha).toISOString().split('T')[0];
-      return fechaCita === fechaInput;
+      const fechaCita = normalizarFechaString(cita.Fecha);
+      return fechaCita === fechaValue;
     })
     .map(cita => cita['Hora Inicio'] || cita.Hora);
 
   Array.from(selectHora.options).forEach(option => {
     if (!option.value) return;
 
-    // Comprobar si la hora de esta opción ya pasó en el día de hoy
-    const fechaHoraOpcion = parseFechaHora(fechaInput, option.value);
+    const fechaHoraOpcion = parseFechaHora(fechaValue, option.value);
     const esHoraPasada = fechaHoraOpcion && fechaHoraOpcion < ahora;
 
     if (horasOcupadas.includes(option.value)) {
@@ -248,15 +280,10 @@ function actualizarHorariosDisponibles() {
   });
 }
 
-function formatHoraTexto(hora) {
-  const [h, m] = hora.split(':');
-  const horaNum = parseInt(h);
-  const hora12 = horaNum % 12 || 12;
-  return `${hora12.toString().padStart(2, '0')}:${m}`;
-}
-
-// Guardar cita (POST)
-document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
+// -------------------------------------------------------------
+// ENVÍO DE FORMULARIO
+// -------------------------------------------------------------
+async function handleFormSubmit(e) {
   e.preventDefault();
   
   const form = e.target;
@@ -266,7 +293,6 @@ document.getElementById('appointmentForm').addEventListener('submit', async (e) 
   const fecha = document.getElementById('fecha').value;
   const hora = document.getElementById('hora').value;
   
-  // 1. VALIDACIÓN FECHA/HORA PASADA
   const fechaHoraSeleccionada = parseFechaHora(fecha, hora);
   const ahora = new Date();
 
@@ -275,10 +301,9 @@ document.getElementById('appointmentForm').addEventListener('submit', async (e) 
     return;
   }
 
-  // 2. VALIDACIÓN HORARIO DISPONIBLE
   const yaOcupado = citasExistentes.some(cita => {
     if (!cita.Fecha) return false;    
-    const fechaCita = new Date(cita.Fecha).toISOString().split('T')[0];
+    const fechaCita = normalizarFechaString(cita.Fecha);
     const horaCita = cita['Hora Inicio'] || cita.Hora;
     return fechaCita === fecha && horaCita === hora;
   });
@@ -288,22 +313,21 @@ document.getElementById('appointmentForm').addEventListener('submit', async (e) 
     return;
   }
 
-  // === BLOQUEAR FORMULARIO Y CAMBIAR CURSOR ===
   document.body.classList.add('is-submitting');
   
-  // Deshabilitar todos los controles del formulario
   const inputs = form.querySelectorAll('input, select, textarea, button');
   inputs.forEach(input => input.disabled = true);
-  refreshBtn.disabled = true;
+  if (refreshBtn) refreshBtn.disabled = true;
 
-  // Cambiar texto del botón e insertar spinner
-  btnText.innerHTML = `
-    <svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-    Guardando Cita...
-  `;
+  if (btnText) {
+    btnText.innerHTML = `
+      <svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Guardando Cita...
+    `;
+  }
 
   const payload = {
     cliente: document.getElementById('cliente').value,
@@ -325,29 +349,26 @@ document.getElementById('appointmentForm').addEventListener('submit', async (e) 
       body: JSON.stringify(payload)
     });
 
-    // Mostrar popup personalizado de éxito
     showModal('Cita enviada para su Revisión y Confirmación. ¡Te esperamos!', '¡Cita Registrada!', 'success');
     form.reset();
     
   } catch (err) {
     showModal('Ocurrió un error al intentar guardar la cita. Inténtalo nuevamente.', 'Error de Conexión', 'error');
   } finally {
-    // === RESTAURAR FORMULARIO Y CURSOR ===
     document.body.classList.remove('is-submitting');
     
     inputs.forEach(input => {
-      // Mantener deshabilitados únicamente el precio y la hora si no hay fecha seleccionada
       if (input.id !== 'precio' && input.id !== 'hora') {
         input.disabled = false;
       }
     });
-    refreshBtn.disabled = false;
+    if (refreshBtn) refreshBtn.disabled = false;
     
-    btnText.textContent = 'Guardar Cita';
+    if (btnText) btnText.textContent = 'Guardar Cita';
     
     setTimeout(() => {
       fetchAppointments();
       iniciarAutoRefresh();
     }, 1000);
   }
-});
+}
