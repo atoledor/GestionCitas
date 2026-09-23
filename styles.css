@@ -1,0 +1,54 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-gotica {
+  font-family: 'UnifrakturMaguntia', cursive;
+}
+
+/* Estilos personalizados para los inputs en modo oscuro */
+.custom-input {
+  background-color: #0c0c0c;
+  border: 1px solid #262626;
+  color: #f0f0f0;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: #d3122a;
+  box-shadow: 0 0 5px rgba(211, 18, 42, 0.4);
+}
+
+.custom-input:disabled {
+  background-color: #1a1a1a;
+  color: #555555;
+  border-color: #222222;
+  cursor: not-allowed;
+}
+
+/* Estilo para las opciones deshabilitadas del select */
+option:disabled {
+  color: #666666;
+  background-color: #1a1a1a;
+}
+
+/* Icono del calendario nativo en color blanco */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Estilo de carga global cuando se envía el formulario */
+body.is-submitting, 
+body.is-submitting * {
+  cursor: wait !important;
+}
+
+/* Transiciones suaves para el Modal Popup */
+.modal-backdrop {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.modal-content {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
